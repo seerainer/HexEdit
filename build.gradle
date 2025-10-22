@@ -2,17 +2,25 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'application'
+    id 'org.graalvm.buildtools.native' version '0.11.2'
 }
 
 group = 'io.github.seerainer.hexedit'
 version = '0.1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+        vendor = JvmVendorSpec.GRAAL_VM
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    swtVersion = '3.130.0'
+    swtVersion = '3.131.0'
     swtArtifact = 'org.eclipse.swt.'
     os = System.getProperty("os.name").toLowerCase()
     arch = System.getProperty("os.arch")
@@ -56,15 +64,9 @@ dependencies {
         exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt'
     }
     
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
-    testImplementation 'org.assertj:assertj-core:3.27.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.0'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
-    }
 }
 
 sourceSets {
@@ -95,6 +97,29 @@ run {
         jvmArgs += '-XstartOnFirstThread'
     }
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
+}
+
+graalvmNative {
+    testSupport = true
+    toolchainDetection = true
+
+    binaries {
+        main {
+            imageName = 'HexEdit'
+            mainClass = application.mainClass
+            buildArgs.add('-march=compatibility')
+            buildArgs.add('-Ob')
+            buildArgs.add('--enable-native-access=ALL-UNNAMED')
+            if (os.contains('mac')) {
+                buildArgs.add('-J-XstartOnFirstThread')
+            }
+            buildArgs.add('--no-fallback')
+            buildArgs.add('-R:MinHeapSize=256m')
+            buildArgs.add('-R:MaxHeapSize=1g')
+            buildArgs.add('-R:MaxNewSize=512m')
+            useFatJar = true
+        }
+    }
 }
 
 tasks.withType(Jar).configureEach {
@@ -196,3 +221,4 @@ task allTests {
 
     tasks.findByName('integrationTest').mustRunAfter 'unitTest'
 }
+
