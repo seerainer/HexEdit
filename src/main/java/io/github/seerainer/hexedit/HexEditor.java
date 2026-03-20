@@ -444,8 +444,8 @@ class HexEditor {
 
     private void openFile() {
 	final var dialog = new FileDialog(shell, SWT.OPEN);
-	dialog.setFilterNames(new String[] { "All Files (*.*)" });
-	dialog.setFilterExtensions(new String[] { "*.*" });
+	dialog.setFilterNames("All Files (*.*)");
+	dialog.setFilterExtensions("*.*");
 
 	final var fileName = dialog.open();
 	if (fileName != null) {
@@ -506,8 +506,8 @@ class HexEditor {
 
     private void saveAsFile() {
 	final var dialog = new FileDialog(shell, SWT.SAVE);
-	dialog.setFilterNames(new String[] { "All Files (*.*)" });
-	dialog.setFilterExtensions(new String[] { "*.*" });
+	dialog.setFilterNames("All Files (*.*)");
+	dialog.setFilterExtensions("*.*");
 
 	final var fileName = dialog.open();
 	if (fileName == null) {

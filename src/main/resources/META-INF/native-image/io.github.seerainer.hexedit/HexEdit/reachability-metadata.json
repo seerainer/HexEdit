@@ -48,6 +48,9 @@
       "type": "org.eclipse.swt.accessibility.Accessible$1"
     },
     {
+      "type": "org.eclipse.swt.accessibility.Accessible$10"
+    },
+    {
       "type": "org.eclipse.swt.dnd.Clipboard$1"
     },
     {
@@ -359,6 +362,26 @@
         },
         {
           "name": "Data4"
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.swt.internal.ole.win32.VARIANT",
+      "fields": [
+        {
+          "name": "lVal"
+        },
+        {
+          "name": "vt"
+        },
+        {
+          "name": "wReserved1"
+        },
+        {
+          "name": "wReserved2"
+        },
+        {
+          "name": "wReserved3"
         }
       ]
     },

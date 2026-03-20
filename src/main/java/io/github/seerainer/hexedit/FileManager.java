@@ -1,8 +1,10 @@
 package io.github.seerainer.hexedit;
 
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Handles file operations for the Hex Editor, including opening, saving, and
@@ -39,8 +41,17 @@ class FileManager {
      */
     byte[] openFile(final String fileName) throws IOException {
 	currentFile = fileName;
-	fileData = Files.readAllBytes(getCurrentFilePath());
-	return fileData;
+	try (var ch = FileChannel.open(getCurrentFilePath(), StandardOpenOption.READ)) {
+	    final var size = ch.size();
+	    if (size > Integer.MAX_VALUE) {
+		throw new IOException(new StringBuilder().append("File too large to fit into a single byte[]: ")
+			.append(size).append(" bytes").toString());
+	    }
+	    final var mbb = ch.map(FileChannel.MapMode.READ_ONLY, 0, size);
+	    fileData = new byte[(int) size];
+	    mbb.get(fileData);
+	    return fileData;
+	}
     }
 
     /**
